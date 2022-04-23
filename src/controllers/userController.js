@@ -22,12 +22,6 @@ const loginUser = async function (req, res) {
       msg: "username or the password is not correct",
     });
 
-  // Once the login is successful, create the jwt token with sign function
-  // Sign function has 2 inputs:
-  // Input 1 is the payload or the object containing data to be set in token
-  // The decision about what data to put in token depends on the business requirement
-  // Input 2 is the secret
-  // The same secret will be used to decode tokens
   let token = jwt.sign(
     {
       userId: user._id.toString(),
