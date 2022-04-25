@@ -15,7 +15,8 @@ router.post('/batches',Batches.batch)
 
 router.post('/developer', developer.developer)
 
-router.post('/eligibleDevelopers', developer.eligibleDevelopers)
+router.get('/eligibleDevelopers', developer.eligibleDevelopers)
  
+router.get('/allDevelopers', developer.allDevelopers)
 
 module.exports = router;
