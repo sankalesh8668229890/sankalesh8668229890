@@ -1,5 +1,16 @@
 const express = require('express');
 const router = express.Router();
-let authorcontroller = require('../controllers/allcontroller')
+let authorcontroller = require('../controllers/allcontroller');
+const { create } = require('../models/authormodel');
+const blogController = require('../controllers/blogController')
+
+
 router.post('/authors',authorcontroller.createauthor)
+router.post ('/createBlog',blogController.createBlog)
+router.get ('/getBlog',blogController.getBlog)
+
+router.put('/updateBlog/:blogId',blogController.updateBlog)
+
 module.exports = router;
+
+
