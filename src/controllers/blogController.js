@@ -30,32 +30,72 @@ const createBlog = async function (req, res) {  // created by jitendra
     // }}
 
     const getBlog = async function (req, res) {  //created by D
-        let { ...data } = req.query
-        console.log("which data" + data.title )
-
-        let getData = await BlogModel.find({ isDeleted: false, isPublished: true, $or: [{ authorId: data.authorId }, { tags: data.tags }, { category: data.category }] })
-        if (getData.length === 0) {
-            res.status(404).send({ status: false, error: "Page not found" })
+        let data = req.query
+        console.log(data);
+        
+        
+        let getData = await BlogModel.find({$and : [{isDeleted: false}, {isPublished: true},data]})
+           console.log(getData);
+        // { $or: [{ authorId: data.authorId }, { tags: data.tags }, { category: data.category },{subcategory : data.subcategory}] })
+        if (getData == 0) {
+            return res.status(404).send({ status: false, error: "Page not found" })
         }
 
-        res.status(200).send({ data: getData })
+        res.status(200).send({ status : true , data: getData })
 
 
     }
 
-
-    const updateBlog = async function (req, res) { // created by D
-        let getId = req.params.blogId  //grab userid from params
+//3rd update data api
+    const updateBlog = async function (req, res) {
+    try{ // created by D
+        let getId = req.params.blogId
+        
+        //if(getId== undefined)return res.status(400).send({staus : false,msg : "Kindly add Author Id"})  //grab userid from params
+        
         let data = req.body  // data to be updated
-        if (data?.isPublished === true) { //if user want to publish 
-            data.publishedAt = Date.now()
+        let checkId = await BlogModel.findById(getId)
+        console.log(checkId);
+        if(checkId){
+
+
+            if (data?.isPublished === true) { //if user want to publish 
+                data.publishedAt = Date.now()
+            }
+            if (data?.isDeleted === true) { // if user wantt to delete
+                data.deletedAt = Date.now()
+            }
+
+            let check = await BlogModel.findByIdAndUpdate(getId, {$push :{tags:data.tags,subcategory : data.subcategory},title:data.title,body:data.body,category:data.category}, { new: true })
+            res.status(200).send({ status: true, msg: check })
         }
-        if (data.isDeleted === true) { // if user want to delete
-            data.isDeletedAt = Date.now()
+        else{
+            res.status(401).send({status : false, msg: "Please enter valid Blog id"})
         }
-        let check = await BlogModel.findByIdAndUpdate(getId, data, { new: true })
-        res.status(200).send({ status: true, msg: check })
+        
+        
+        
+    }catch(error){
+        console.log(error.message)
+        res.status(500).send(error.message)
+    } 
     }
 
 
-    module.exports = { createBlog, getBlog, updateBlog }
+    //delete 
+    const deleteBlog = async function(req,res){
+        let blogId = req.params.blogId
+        
+        if(!blogId){return res.status(404).send("KINDLY ADD BLOG ID")}
+        let blog = await BlogModel.findById(blogId)
+       
+       if(!blog){return res.status(404).send("NOT A VALID BLOG ID")}
+       if (blog.isDeleted==false){
+           let save = await BlogModel.findOneAndUpdate({_id:blogId},{$set:{isDeleted:true,deletedAt:Date.now()}},{new:true})
+           
+           return res.status(200).send({msg:save})
+    }else{
+        res.status(404).send({status:false,msg:"already deleted"})
+    }
+}
+    module.exports = { createBlog, getBlog, updateBlog,deleteBlog }
