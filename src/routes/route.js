@@ -13,6 +13,7 @@ router.put('/updateBlog/:blogId',blogController.updateBlog)
 
 
 router.put('/deleteBlog/:blogId',blogController.deleteBlog)
+router.put('/delete')
 
 
 
