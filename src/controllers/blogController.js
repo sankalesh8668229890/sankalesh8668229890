@@ -31,7 +31,7 @@ const createBlog = async function (req, res) {  // created by jitendra
 
     const getBlog = async function (req, res) {  //created by D
         let { ...data } = req.query
-        //console.log("which data" + data.title )
+        console.log("which data" + data.title )
 
         let getData = await BlogModel.find({ isDeleted: false, isPublished: true, $or: [{ authorId: data.authorId }, { tags: data.tags }, { category: data.category }] })
         if (getData.length === 0) {
