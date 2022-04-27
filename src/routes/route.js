@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-let authorcontroller = require('../controllers/allcontroller');
+let authorcontroller = require('../controllers/authorController');
 const { create } = require('../models/authormodel');
 const blogController = require('../controllers/blogController')
 
