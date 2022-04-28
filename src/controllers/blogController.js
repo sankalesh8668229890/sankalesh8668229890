@@ -31,7 +31,7 @@ const createBlog = async function (req, res) {
 
 const getBlog = async function (req, res) {
     try {
-
+        let data = req.body;
      
         let getData = await BlogModel.find({
             $and: [{ isDeleted: false }, { isPublished: true }, data],
@@ -63,7 +63,7 @@ const updateBlog = async function (req, res) {
                 let check = await BlogModel.findByIdAndUpdate(
                     getId,
                     {
-                        $push: { tags: {$each:data.tags}, subcategory:{$each :data.subcategory} },
+                        $push: { tags:data.tags, subcategory:data.subcategory },
                         title: data.title,
                         body: data.body,
                         category: data.category,

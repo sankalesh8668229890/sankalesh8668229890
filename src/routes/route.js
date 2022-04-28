@@ -12,14 +12,14 @@ router.post('/login', login)
 router.post('/authors',authorcontroller.createauthor)
 router.post ('/createBlog',blogController.createBlog)
 
-router.get ('/getBlog',auth1,blogController.getBlog)
+router.get ('/getBlog',blogController.getBlog)
 
 router.put('/updateBlog/:blogId',blogController.updateBlog)
 
 
 
-router.delete('/deleteBlog/:blogId',auth2,blogController.deleteBlog)
-router.delete('/deletebyquery',auth1,blogController.deletebyquery)
+router.delete('/deleteBlog/:blogId',blogController.deleteBlog)
+router.delete('/deletebyquery',blogController.deletebyquery)
 
 
 
