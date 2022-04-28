@@ -63,7 +63,7 @@ const updateBlog = async function (req, res) {
                 let check = await BlogModel.findByIdAndUpdate(
                     getId,
                     {
-                        $push: { tags: data.tags, subcategory: data.subcategory },
+                        $push: { tags: {$each:data.tags}, subcategory:{$each :data.subcategory} },
                         title: data.title,
                         body: data.body,
                         category: data.category,
