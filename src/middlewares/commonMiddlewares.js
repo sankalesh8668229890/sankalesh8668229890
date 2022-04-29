@@ -4,6 +4,7 @@ const Blogmodel = require('../models/Blogmodel')
 const mongoose = require('mongoose')
 const isValidObjectId = (objectId) => mongoose.Types.ObjectId.isValid(objectId)
  const jwt=require('jsonwebtoken')
+ const bcrypt = require("bcryptjs")
 
 
 const auth1 = async function (req,res,next){
@@ -29,7 +30,12 @@ console.log(get)
     if (decodedtoken.authorId !=get.authorId) { return res.status(403).send({ status: false, msg: "NOT AUTHORISED" }) }
     next()
 }
+
+
+
+
 module.exports = {auth1,auth2}
+
 
 
 

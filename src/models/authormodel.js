@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 //require("mongoose-type-email")
 const validator = require('validator')
 //const ObjectId = mongoose.Schema.Types.ObjectId
-
+const bcrypt = require("bcryptjs")
+let authorcontroller = require('../controllers/authorController');
 
 //Schema
 const AuthorSchema = new mongoose.Schema({
@@ -24,6 +25,19 @@ const AuthorSchema = new mongoose.Schema({
 	password: { type: String, required: true }
 
 })
+	// let save = async function(req,res,next){ 
+
+// AuthorSchema.pre("save",async function(next){
+// 	// const passwordHash = await bcrypt.hash(password,10); 
+// 	if (this.isModified("password")){
+// 		console.log(`before-${this.password}`);
+// 		// this.password = await bcrypt.hash(this.password,10)
+// 		console.log(`after-${this.password}`);
+
+// 	}
+// 	next();
+// })
+
 
 module.exports = mongoose.model('Author', AuthorSchema)
 
