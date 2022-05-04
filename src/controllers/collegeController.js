@@ -8,20 +8,22 @@ let keyValid = function (value) {
     return false
 }
 
+//  "" =0         "      "  = 6  invalid   undifen
+
 let createCollege = async (req, res) => {
     try {
         data = req.body
         const { name, fullName, logoLink, isDeleted } = data
 
-        if (!name) return res.status(400).send({ status: false, msg: "name is required...." });
-        if (keyValid(name)) return res.status(400).send({ status: false, msg: "name should be valid" })
+        if (!name) return res.status(400).send({ status: false, Message: "name is required...." });
+        if (keyValid(name)) return res.status(400).send({ status: false, Message: "name should be valid" })
 
-        if (!fullName) return res.status(400).send({ status: false, msg: "fullName is required...." });
-        if (keyValid(fullName)) return res.status(400).send({ status: false, msg: "fullName should be valid" })
+        if (!fullName) return res.status(400).send({ status: false, Message: "fullName is required...." });
+        if (keyValid(fullName)) return res.status(400).send({ status: false, Message: "fullName should be valid" })
 
-        if (!logoLink) return res.status(400).send({ status: false, msg: "logoLink is required....." });
-        if (keyValid(logoLink)) return res.status(400).send({ status: false, msg: "logoLink should be valid" })
-        if (!/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(logoLink)) return res.status(400).send({ status: false, msg: "Invalid Url format" })
+        if (!logoLink) return res.status(400).send({ status: false, Message: "logoLink is required....." });
+        if (keyValid(logoLink)) return res.status(400).send({ status: false, Message: "logoLink should be valid" })
+        if (!/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(logoLink)) return res.status(400).send({ status: false, Message: "Invalid Url format" })
 
         const createdCollege = await collegeModel.create(data)
         return res.status(201).send({ status: true, data: createdCollege })
