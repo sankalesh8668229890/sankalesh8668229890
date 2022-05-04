@@ -7,7 +7,7 @@ const internSchema = new mongoose.Schema({
         type: String, required: true, unique: true, trim: true
     },
     mobile: {
-        type: Number,required:true,unique:true
+        type: String,required:true,unique:true
     },
     collegeId: {
         type: ObjectId, required: true, ref: "College",
