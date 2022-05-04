@@ -1,5 +1,6 @@
+const { findOne } = require("../models/collegeModel")
+const collegeModel = require("../models/collegeModel")
 const internModel = require("../models/internModel")
-const jwt = require("jsonwebtoken")
 
 let keyValid = function (value) {
     if (typeof (value) == "undefined") { return true }
@@ -10,45 +11,50 @@ let keyValid = function (value) {
 let createCollege = async (req, res) => {
     try {
         data = req.body
-        const { name, lname, title, email, password } = data
-        
-        if (!fname) return res.status(400).send({ status: false, msg: "fname is required...." });
-        if (keyValid(fname)) return res.status(400).send({ status: false, msg: "fname should be valid" })
+        const { name, fullName, logoLink, isDeleted } = data
 
-        if (!lname) return res.status(400).send({ status: false, msg: "lname is required...." });
-        if (keyValid(lname)) return res.status(400).send({ status: false, msg: "lname should be valid" })
+        if (!name) return res.status(400).send({ status: false, msg: "name is required...." });
+        if (keyValid(name)) return res.status(400).send({ status: false, msg: "name should be valid" })
 
-        if (!title) return res.status(400).send({ status: false, msg: "title is required...." });
-        if (keyValid(title)) return res.status(400).send({ status: false, msg: "title should be valid" })
+        if (!fullName) return res.status(400).send({ status: false, msg: "fullName is required...." });
+        if (keyValid(fullName)) return res.status(400).send({ status: false, msg: "fullName should be valid" })
 
-        if (!email) return res.status(400).send({ status: false, msg: "email is required...." });
-        if (keyValid(email)) return res.status(400).send({ status: false, msg: "email should be valid" })
-        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) return res.status(400).send({ status: false, msg: "Invalid email format" })
-        
-        if (!password) return res.status(400).send({ status: false, msg: "password is required....." });
-        if (keyValid(password)) return res.status(400).send({ status: false, msg: "password should be valid" })
+        if (!logoLink) return res.status(400).send({ status: false, msg: "logoLink is required....." });
+        if (keyValid(logoLink)) return res.status(400).send({ status: false, msg: "logoLink should be valid" })
+        if (!/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(logoLink)) return res.status(400).send({ status: false, msg: "Invalid Url format" })
 
-        const validEmail = await authorModel.findOne({ email: email })
-        if (validEmail) return res.status(400).send({ status: false, msg: "Email already exist" })
-
-        const createdAuthor = await authorModel.create(data)
-        return res.status(201).send({ status: true, data: createdAuthor })
+        const createdCollege = await collegeModel.create(data)
+        return res.status(201).send({ status: true, data: createdCollege })
     }
     catch (err) {
         res.status(500).send({ Error: err.message })
     }
 }
 
-let loginAuthor = async (req, res) => {
-    let data = req.body
-    let { email, password } = data
-    let validAuthor = await authorModel.findOne({ email: email, password: password })
-    if (!validAuthor) return res.status(400).send({ status: false, msg: "Wrong login details" })
-    let authorId = validAuthor._id
-    let token = await jwt.sign({ authorId: authorId }, "functionUp project1Blog")
-    res.setHeader("X-api-token", token)
-    res.status(201).send({ status: true, data: token })
+const getCollegeDetails = async function (req, res) {
+    try {
+        const queryParams = req.query
+        const collegeName = queryParams.collegeName
+        // const { name, fullName, logoLink } = queryParams
+ 
+        const collegeDetails = await collegeModel.findOne({ name: collegeName })
+        if (!collegeDetails) return res.status(404).send({ status: false, message: "Please Provide CollegeName" })
+        const collegeID = collegeDetails._id
+        const getInternsByCollegeID = await internModel.find({ collegeId: collegeID })
+        const data = {
+            name: collegeDetails.name,
+            fullName: collegeDetails.fullName,
+            logoLink: collegeDetails.logoLink,
+            interns: getInternsByCollegeID
+        }
+
+        res.status(200).send({ status: true, data: data })
+
+    } catch (error) {
+        res.status(500).send({ error: error.message })
+    }
 }
 
-module.exports.createIntern = createIntern
-module.exports.loginAuthor = loginAuthor
+
+module.exports.createCollege = createCollege
+module.exports.getCollegeDetails = getCollegeDetails
