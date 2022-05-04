@@ -1,20 +1,14 @@
 
-const authorModel = require("../models/collegeModel");
-const blogModel = require("../models/internModel")
+const collegeModel = require("../models/collegeModel");
+const internModel = require("../models/internModel")
 //######################################################################################################################
 
 let createIntern = async function (req, res)  {
     try {
        let data = req.body
-    //    let number = req.body.mobile
-    //    let name = req.body.name
-    //    let mobile = req.body.mobile
-    //    let email = req.body.email
-    //    let collegeName = req.body.collegeName
-
-        let regex = /^[a-zA-Z ]{2,30}$/
-        let emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-        let mobileRegex = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/
+       let regex = /^[a-zA-Z ]{2,30}$/
+       let emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+       let mobileRegex = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/
 
     // validation for null inputs
     if(!data.name)return res.status(400).send({status :false , msg:" PLEASE ENTER NAME"})
@@ -31,12 +25,8 @@ let createIntern = async function (req, res)  {
     if(duplicate){
         return res.status(400).send({status:false, msg:"Email or Mobile Number already exist"})
     }
-
-    //    let intern = await collegeModel.findById(data.collegeId);
-    //    res.status(200).send()
        let newIntern = await internModel.create(data);
        res.status(201).send({status:true,msg:"Data saved sucessfully", data:newIntern})
-
 
     }
     catch (err) {
