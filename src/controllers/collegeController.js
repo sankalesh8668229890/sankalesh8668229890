@@ -1,10 +1,9 @@
-const { findOne } = require("../models/collegeModel")
 const collegeModel = require("../models/collegeModel")
 const internModel = require("../models/internModel")
 
 let keyValid = function (value) {
     if (typeof (value) == "undefined") { return true }
-    if (typeof (value) === "string" && value.trim().length == 0) { return true }
+    if (typeof (value) === "string" && value.trim().length == 0) { return true }   
     return false
 }
 
@@ -12,7 +11,7 @@ let keyValid = function (value) {
 let createCollege = async (req, res) => {
     try {
         data = req.body
-        const { name, fullName, logoLink, isDeleted } = data
+        const { name, fullName, logoLink} = data
 
         if (!name) return res.status(400).send({ status: false, Message: "name is required...." });
         if (keyValid(name)) return res.status(400).send({ status: false, Message: "name should be valid" })
@@ -34,11 +33,13 @@ let createCollege = async (req, res) => {
 
 const getCollegeDetails = async function (req, res) {
     try {
-        const queryParams = req.query
-        const collegeName = queryParams.collegeName
+        const collegeName = req.query.collegeName
+
         if(!collegeName) return res.status(400).send({status:false,message:"Please Provide College Name"})
+        
         const collegeDetails = await collegeModel.findOne({ name: collegeName })
         if (!collegeDetails) return res.status(404).send({ status: false, message: "No College Found" })
+        
         const collegeID = collegeDetails._id
 
         const internsByCollegeID = await internModel.find({ collegeId: collegeID }).select({_id:1,name:1,email:1,mobile:1})
