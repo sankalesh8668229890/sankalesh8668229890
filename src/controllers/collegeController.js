@@ -8,7 +8,6 @@ let keyValid = function (value) {
     return false
 }
 
-//  "" =0         "      "  = 6  invalid   undifen
 
 let createCollege = async (req, res) => {
     try {
@@ -37,17 +36,18 @@ const getCollegeDetails = async function (req, res) {
     try {
         const queryParams = req.query
         const collegeName = queryParams.collegeName
-        // const { name, fullName, logoLink } = queryParams
- 
+        if(!collegeName) return res.status(400).send({status:false,message:"Please Provide College Name"})
         const collegeDetails = await collegeModel.findOne({ name: collegeName })
-        if (!collegeDetails) return res.status(404).send({ status: false, message: "Please Provide CollegeName" })
+        if (!collegeDetails) return res.status(404).send({ status: false, message: "No College Found" })
         const collegeID = collegeDetails._id
-        const getInternsByCollegeID = await internModel.find({ collegeId: collegeID })
+
+        const internsByCollegeID = await internModel.find({ collegeId: collegeID }).select({_id:1,name:1,email:1,mobile:1})
+        
         const data = {
             name: collegeDetails.name,
             fullName: collegeDetails.fullName,
             logoLink: collegeDetails.logoLink,
-            interns: getInternsByCollegeID
+            interns: internsByCollegeID
         }
 
         res.status(200).send({ status: true, data: data })
