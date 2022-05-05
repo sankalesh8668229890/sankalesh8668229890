@@ -12,16 +12,20 @@ let createCollege = async (req, res) => {
     try {
         data = req.body
         const { name, fullName, logoLink} = data
+        let nameRegex = /^[a-zA-Z ]{2,30}$/
 
+        const repeativeCollegeName = await collegeModel.find({name:name})
+        if(repeativeCollegeName) return res.status(400).send({status:true,Message:"This college Name is Already taken"})
+        
         if (!name) return res.status(400).send({ status: false, Message: "name is required...." });
         if (keyValid(name)) return res.status(400).send({ status: false, Message: "name should be valid" })
+        if (!name.match(nameRegex)) return res.status(400).send({ status: false, Message: "FIRSTNAME SHOULD ONLY CONATIN ALPHABATS AND LENTH MUST BE IN BETWEEN 2-30" })
 
         if (!fullName) return res.status(400).send({ status: false, Message: "fullName is required...." });
         if (keyValid(fullName)) return res.status(400).send({ status: false, Message: "fullName should be valid" })
 
         if (!logoLink) return res.status(400).send({ status: false, Message: "logoLink is required....." });
         if (keyValid(logoLink)) return res.status(400).send({ status: false, Message: "logoLink should be valid" })
-        if (!/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(logoLink)) return res.status(400).send({ status: false, Message: "Invalid Url format" })
 
         const createdCollege = await collegeModel.create(data)
         return res.status(201).send({ status: true, data: createdCollege })
@@ -33,21 +37,22 @@ let createCollege = async (req, res) => {
 
 const getCollegeDetails = async function (req, res) {
     try {
-        const collegeName = req.query.collegeName
+        const collegeName = req.query.collegeName.trim()
+        console.log(collegeName)
 
         if(!collegeName) return res.status(400).send({status:false,message:"Please Provide College Name"})
         
-        const collegeDetails = await collegeModel.findOne({ name: collegeName })
-        if (!collegeDetails) return res.status(404).send({ status: false, message: "No College Found" })
-        
-        const collegeID = collegeDetails._id
+        const collegeDetail = await collegeModel.findOne({ name: collegeName })
+        if (!collegeDetail) return res.status(404).send({ status: false, message: "No College Found" })
+
+        const collegeID = collegeDetail._id
 
         const internsByCollegeID = await internModel.find({ collegeId: collegeID }).select({_id:1,name:1,email:1,mobile:1})
         
         const data = {
-            name: collegeDetails.name,
-            fullName: collegeDetails.fullName,
-            logoLink: collegeDetails.logoLink,
+            name: collegeDetail.name,
+            fullName: collegeDetail.fullName,
+            logoLink: collegeDetail.logoLink,
             interns: internsByCollegeID
         }
 
