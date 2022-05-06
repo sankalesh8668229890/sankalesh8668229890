@@ -12,9 +12,10 @@ let createCollege = async (req, res) => {
     try {
         data = req.body
         const { name, fullName, logoLink} = data
+        
         let nameRegex = /^[a-zA-Z ]{2,30}$/
 
-        const repeativeCollegeName = await collegeModel.find({name:name})
+        const repeativeCollegeName = await collegeModel.findOne({name:name})
         if(repeativeCollegeName) return res.status(400).send({status:true,Message:"This college Name is Already taken"})
         
         if (!name) return res.status(400).send({ status: false, Message: "name is required...." });
@@ -37,8 +38,7 @@ let createCollege = async (req, res) => {
 
 const getCollegeDetails = async function (req, res) {
     try {
-        const collegeName = req.query.collegeName.trim()
-        console.log(collegeName)
+        const collegeName = req.query.collegeName
 
         if(!collegeName) return res.status(400).send({status:false,message:"Please Provide College Name"})
         
